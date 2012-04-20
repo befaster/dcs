@@ -1,12 +1,25 @@
 <?php
-
 function commerce_interkassa_menu() {
-    $items['commerce_interkassa/test'] = array(
-        'title' => 'Test form Interkassa',
-        'page callback' => 'commerce_interkassa_test',
-        'page arguments' => array(),
-        'access callback' => TRUE,
-        'type' => MENU_NORMAL_ITEM,
+    $items['commerce_interkassa/status'] = array(
+        'title' => 'Status',
+        'page callback' => '_commerce_interkassa_status',
+        'access arguments' => array('access content'),
+        'file' => 'commerce_interkassa.inc',
+        'type' => MENU_CALLBACK,
+    );
+    $items['commerce_interkassa/success'] = array(
+        'title' => 'Successful payment',
+        'page callback' => '_commerce_interkassa_success',
+        'access arguments' => array('access content'),
+        'file' => 'commerce_interkassa.inc',
+        'type' => MENU_CALLBACK,
+    );
+    $items['commerce_interkassa/fail'] = array(
+        'title' => 'Unsuccessful payment',
+        'page callback' => '_commerce_interkassa_fail',
+        'access arguments' => array('access content'),
+        'file' => 'commerce_interkassa.inc',
+        'type' => MENU_CALLBACK,
     );
     return $items;
 }
@@ -33,7 +46,7 @@ function commerce_interkassa_settings_form($settings = NULL) {
         '#description' => t('Assigned by PayU'),
         '#required' => TRUE,
     );
-
+    
     return $form;
 }
 
@@ -82,10 +95,16 @@ function commerce_interkassa_redirect_form($form, &$form_state, $order, $payment
 
     // Build the data array that will be translated into hidden form values.
     $data = array(
-        'ik_shop_id' => 'C6C00382-2752-9476-9CED-3C766EA2BD1',
+        'ik_shop_id' => 'C6C00382-2752-9476-9CED-3C766EA2BD10',
         'ik_payment_amount' => '0.10',
         'ik_payment_id' => 'id1',
         'ik_payment_desc' => 'description',
+        'ik_success_url' => $_SERVER['SERVER_NAME'] . 'commerce_interkassa/success',
+        'ik_success_method' => 'post',
+        'ik_fail_url' => $_SERVER['SERVER_NAME'] . 'commerce_interkassa/fail',
+        'ik_fail_method' => 'post',
+        'ik_status_url' => $_SERVER['SERVER_NAME'] . 'commerce_interkassa/status',
+        'ik_status_method' => 'post',
     );
 
     $form['#action'] = 'https://interkassa.com/lib/payment.php';
@@ -95,7 +114,7 @@ function commerce_interkassa_redirect_form($form, &$form_state, $order, $payment
             $form[$name] = array('#type' => 'hidden', '#value' => $value);
         }
     }
-
+    
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Proceed to Interkassa'),
