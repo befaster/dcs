@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Provides an example payment method for Drupal Commerce for testing and
- *   development.
- */
 function commerce_interkassa_menu() {
     $items['commerce_interkassa/test'] = array(
         'title' => 'Test form Interkassa',
@@ -20,35 +15,26 @@ function commerce_interkassa_menu() {
  * Payment method callback: settings form.
  */
 function commerce_interkassa_settings_form($settings = NULL) {
-  $form = array();
+    $form = array();
 
-  $settings = (array) $settings + array(
-    'pos_id' => 0,
-    'pos_auth_key' => '',
-    'md5' => '',
-    'md5_2' => '',
-    'payback' => 0,
-  );
-
-
-  $form['pos_id'] = array(
-    '#title' => t('POS id'),
-    '#type' => 'textfield',
-    '#default_value' => $settings['pos_id'],
-    '#description' => t('Assigned by PayU'),
-    '#required' => TRUE,
-  );
+    $settings = (array) $settings + array(
+        'pos_id' => 0,
+        'pos_auth_key' => '',
+        'md5' => '',
+        'md5_2' => '',
+        'payback' => 0,
+    );
 
 
+    $form['pos_id'] = array(
+        '#title' => t('POS id'),
+        '#type' => 'textfield',
+        '#default_value' => $settings['pos_id'],
+        '#description' => t('Assigned by PayU'),
+        '#required' => TRUE,
+    );
 
-  return $form;
-}
-
-
-
-function commerce_interkassa_test() {
-    $output = '';
-    return $output;
+    return $form;
 }
 
 /**
@@ -57,15 +43,14 @@ function commerce_interkassa_test() {
 function commerce_interkassa_commerce_payment_method_info() {
     $payment_methods = array();
 
-    //$icon = '<img src="/' . drupal_get_path('module', 'commerce_interkassa') . '/images/interkassa_logo.gif">';
-    //$display_title = t('Interkassa <br/>!logo', array('!logo' => $icon));
-
     $payment_methods['commerce_interkassa'] = array(
         'title' => t('Interkassa'),
         'short_title' => t('Interkassa'),
         'display_title' => t('Interkassa'),
         'description' => t('Interkassa Payment'),
         'active' => TRUE,
+        'offsite' => TRUE,
+        'offsite_autoredirect' => TRUE,
     );
 
     return $payment_methods;
@@ -76,7 +61,7 @@ function commerce_interkassa_commerce_payment_method_info() {
  */
 function commerce_interkassa_submit_form($payment_method, $pane_values, $checkout_pane, $order) {
     $form = array();
-    
+
     $text = theme('image', array('path' => drupal_get_path('module', 'commerce_interkassa') . '/images/interkassa_logo.gif', 'alt' => t('Interkassa'), 'title' => t('Interkassa'), 'attributes' => array('class' => 'interkassa-logo')));
     $form['logo'] = array('#markup' => $text);
 
@@ -86,6 +71,36 @@ function commerce_interkassa_submit_form($payment_method, $pane_values, $checkou
         '#type' => 'hidden',
         '#value' => 'dummy'
     );
+    return $form;
+}
+
+/**
+ * Payment method callback: redirect form, a wrapper around the module's general
+ *   use function for building a WPS form.
+ */
+function commerce_interkassa_redirect_form($form, &$form_state, $order, $payment_method) {
+
+    // Build the data array that will be translated into hidden form values.
+    $data = array(
+        'ik_shop_id' => 'C6C00382-2752-9476-9CED-3C766EA2BD1',
+        'ik_payment_amount' => '0.10',
+        'ik_payment_id' => 'id1',
+        'ik_payment_desc' => 'description',
+    );
+
+    $form['#action'] = 'https://interkassa.com/lib/payment.php';
+
+    foreach ($data as $name => $value) {
+        if (!empty($value)) {
+            $form[$name] = array('#type' => 'hidden', '#value' => $value);
+        }
+    }
+
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Proceed to Interkassa'),
+    );
+
     return $form;
 }
 
@@ -135,3 +150,4 @@ function commerce_interkassa_transaction($payment_method, $order, $charge) {
     dpm($transaction);
     commerce_payment_transaction_save($transaction);
 }
+
