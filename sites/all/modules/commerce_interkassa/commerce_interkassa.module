@@ -95,11 +95,16 @@ function commerce_interkassa_submit_form($payment_method, $pane_values, $checkou
 function commerce_interkassa_redirect_form($form, &$form_state, $order, $payment_method) {
     global $base_url;
     
+    /*
     $wrapper = entity_metadata_wrapper('commerce_order', $order);
 
     $currency_code = $wrapper->commerce_order_total->currency_code->value();
     $amount = $wrapper->commerce_order_total->amount->value();
-
+    */
+    
+    $currency_code = $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'];
+    $amount = commerce_currency_amount_to_decimal($order->commerce_order_total[LANGUAGE_NONE][0]['amount'], $currency_code);
+    
     // Build the data array that will be translated into hidden form values.
     $data = array(
         'ik_shop_id' => 'C6C00382-2752-9476-9CED-3C766EA2BD10',
