@@ -19,7 +19,7 @@ function commerce_interkassa_menu() {
 /**
  * Payment method callback: settings form.
  */
-function commerce_payu_settings_form($settings = NULL) {
+function commerce_interkassa_settings_form($settings = NULL) {
   $form = array();
 
   $settings = (array) $settings + array(
