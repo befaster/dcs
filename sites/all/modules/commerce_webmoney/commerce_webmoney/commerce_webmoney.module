@@ -1,0 +1,248 @@
+<?php
+
+define('WEBMONEY_MERCHANT_URL', 'https://merchant.webmoney.ru/lmi/payment.asp');
+
+module_load_include('inc', 'commerce_webmoney', 'includes/commerce_webmoney.admin');
+
+function commerce_webmoney_commerce_payment_method_info() {
+  
+  $payment_methods = array();
+  $payment_methods['commerce_webmoney'] = array(	
+	'base' => 'commerce_webmoney',
+    'title' => t('Webmoney'),
+    'short_title' => t('Webmoney'),
+    'display_title' => t('Webmoney'),
+    'description' => t('Integrates Webmoney Merchant'),
+    'terminal' => FALSE,
+    'offsite' => TRUE,
+	'active' => TRUE,
+  );
+
+  return $payment_methods;
+}
+
+function commerce_webmoney_menu() {
+  $items['webmoney/result'] = array(
+    'title' => 'Result of payment through Webmoney Merchant',
+    'page callback' => 'commerce_webmoney_result',
+    'access callback' => TRUE,  
+    'type' => MENU_CALLBACK,
+  );
+  $items['webmoney/success'] = array(
+    'title' => 'Successful payment',
+    'page callback' => 'commerce_webmoney_success',
+    'access arguments' => array('access content'),  
+    'type' => MENU_CALLBACK,
+  );
+  $items['webmoney/fail'] = array(
+    'title' => 'Unsuccessful payment',
+    'page callback' => 'commerce_webmoney_fail',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );    
+  return $items;
+}
+
+function commerce_webmoney_submit_form($payment_method, $pane_values, $checkout_pane, $order) {
+  
+  $form = array();  
+  $text = theme('image', array('path' => drupal_get_path('module', 'commerce_webmoney') . '/webmoney.gif', 'alt' => t('Webmoney'), 'title' => t('Webmoney'), 'attributes' => array('class' => 'wm-logo')));   
+  $text .= '<div class="webmoney-desc">' . t('WebMoney - this is a multifunctional payment tool that provides secure and immediate transactions online.') . '</div>';
+  
+  $form['print_receipt'] = array('#markup' => $text);  
+  return $form;
+}
+
+function commerce_webmoney_build_redirect_form($form, &$form_state, $order, $settings) {
+  
+  $currency_code = $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'];  
+  $amount = commerce_currency_amount_to_decimal($order->commerce_order_total[LANGUAGE_NONE][0]['amount'], $currency_code);
+  $description = base64_encode(commerce_webmoney_order_desc($order->order_id));  
+ 
+  $data = array(
+
+    'LMI_PAYEE_PURSE' => commerce_webmoney_purse(),
+    'LMI_PAYMENT_NO' => $order->order_id,
+    'LMI_PAYMENT_AMOUNT' => $amount,
+    'LMI_PAYMENT_DESC_BASE64' => $description,
+    'LMI_SIM_MODE' => commerce_webmoney_get_settings('sim_mode'),
+    'LMI_RESULT_URL' => commerce_webmoney_get_settings('result_url'),
+    'LMI_SUCCESS_URL' => commerce_webmoney_get_settings('success_url'),
+    'LMI_FAIL_URL ' => commerce_webmoney_get_settings('fail_url'),
+  );
+
+  $form['#action'] = WEBMONEY_MERCHANT_URL;
+
+  foreach ($data as $name => $value) {
+    if (!empty($value)) {
+      $value = trim($value);
+      $form[$name] = array('#type' => 'hidden', '#value' => $value);
+    }
+  }
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Pay via Webmoney Merchant'),
+  );
+
+  return $form;
+}
+
+
+function commerce_webmoney_redirect_form($form, &$form_state, $order, $payment_method) {
+ 
+  $purse = commerce_webmoney_purse();
+  
+  if (!$purse) {
+    drupal_set_message(t('Sorry, no purse available. Please go back and choose another payment method'), 'error');
+    return array();
+  }
+  return commerce_webmoney_build_redirect_form($form, $form_state, $order, $payment_method['settings']);
+}
+
+
+function commerce_webmoney_purse() {
+
+  $purse = '';  
+  $default = commerce_default_currency();
+  
+  switch ($default) {
+    case 'USD':
+        $purse = commerce_webmoney_get_settings('purse_wmz');
+        break;
+    case 'EUR':
+        $purse = commerce_webmoney_get_settings('purse_wme');
+        break;
+    case 'UAH':
+        $purse = commerce_webmoney_get_settings('purse_wmu');
+        break;
+    case 'RUB':
+        $purse = commerce_webmoney_get_settings('purse_wmr');
+        break;	
+    }
+  
+  return $purse;
+}
+
+function commerce_webmoney_order_desc($order_id) {
+   
+   $output = '';
+   $text = commerce_webmoney_get_settings('description');	  
+   $output = (mb_strlen($text)) ? str_replace('%order', $order_id , $text) : t('Payment for order @order_number at @store', array('@order_number' => $order_id, '@store' => variable_get('site_name', '')));
+
+ return $output;
+}
+
+function commerce_webmoney_get_settings($settings) {
+  
+    $output = '';
+    $vars = variable_get('commerce_webmoney_settings', '');
+   
+    if (!empty($vars)) {
+         foreach ($vars as $key=>$var) {
+             if ($key == $settings) {	
+	             $output = $vars[$key]['#default_value'];
+	             break;	
+	        }  
+        }
+    } 
+  return $output;
+}
+
+function commerce_webmoney_result() {
+    
+	if (!empty($_POST)) {
+	
+	    if (isset($_POST['LMI_PREREQUEST']) && $_POST['LMI_PREREQUEST'] == 1) {
+                print 'YES';
+                exit;
+        }
+	
+	    $pass = commerce_webmoney_get_settings('secret_key');
+	    $md5 = strtoupper(md5($_POST['LMI_PAYEE_PURSE'] . $_POST['LMI_PAYMENT_AMOUNT'] . $_POST['LMI_PAYMENT_NO'] . $_POST['LMI_MODE'] . $_POST['LMI_SYS_INVS_NO'] . $_POST['LMI_SYS_TRANS_NO'] . $_POST['LMI_SYS_TRANS_DATE'] . $pass . $_POST['LMI_PAYER_PURSE'] . $_POST['LMI_PAYER_WM']));	
+	    $log = (commerce_webmoney_get_settings('log')) ? '<pre>' . check_plain(print_r($_POST, TRUE)) . '</pre>' : '';	
+	
+	    if ($md5 == $_POST['LMI_HASH']) {
+       
+            $recived_order_id = $_POST['LMI_PAYMENT_NO'];
+			$order = commerce_order_load($recived_order_id);			
+			
+			$currency_code = $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'];			
+			$real_amount = abs(commerce_currency_amount_to_decimal($order->commerce_order_total[LANGUAGE_NONE][0]['amount'], $currency_code));			
+	        $recived_amount = abs($_POST['LMI_PAYMENT_AMOUNT']);
+
+            $real_purse = commerce_webmoney_purse();
+			$recived_purse = $_POST['LMI_PAYEE_PURSE'];			
+	        
+            if ($real_amount == $recived_amount && $real_purse == $recived_purse) {		 
+		 
+		 		commerce_webmoney_create_transaction($recived_order_id, commerce_webmoney_get_settings('status')); 
+				watchdog('commerce_webmoney', 'Order #@order paid successfully. !log', array('@order' => $_POST['LMI_PAYMENT_NO'], '!log' => $log), WATCHDOG_NOTICE);
+            }
+			else {
+			
+				drupal_set_message(t('An error occurred while processing your payment: recieved and real order info do not match'), 'error');				
+				watchdog('commerce_webmoney', 'Order #@order was not paid: recieved and real order info do not match. !log', array('@order' => $_POST['LMI_PAYMENT_NO'], '!log' => $log), WATCHDOG_NOTICE);						
+			}
+	
+	    }
+        else {
+      
+	        drupal_set_message(t('An error occurred while processing your payment: wrong signature'), 'error');	        
+			watchdog('commerce_webmoney', 'An error occurred while processing payment for order #@order: wrong signature !log', array('@order' => $order_id, '!log' => $log), WATCHDOG_ERROR);    
+        }	
+	}
+}
+
+function commerce_webmoney_fail() {
+ 
+    $output = '';	
+    drupal_set_message(t('Payment unsuccessful!'), 'error');	
+	$output = (commerce_webmoney_get_settings('fail_message')) ? commerce_webmoney_get_settings('fail_message') : '';
+	
+  return $output; 
+}
+
+function commerce_webmoney_success() {
+  
+    $output = MENU_ACCESS_DENIED;
+
+    if ($_REQUEST['LMI_PAYMENT_NO'] && $_REQUEST['LMI_SYS_INVS_NO'] && $_REQUEST['LMI_SYS_TRANS_NO'] && $_REQUEST['LMI_SYS_TRANS_DATE']) { 
+
+       $message = t('Thank you, payment successful. Order #@shop_order,<br />Webmoney order number: @wm_order,<br />Webmoney transaction number: @wm_trans,<br />Webmoney transaction date: @wm_date', 
+	                array('@shop_order' => $_REQUEST['LMI_PAYMENT_NO'], '@wm_order' => $_REQUEST['LMI_SYS_INVS_NO'], '@wm_trans' => $_REQUEST['LMI_SYS_TRANS_NO'], '@wm_date' => $_REQUEST['LMI_SYS_TRANS_DATE']));   
+
+        drupal_set_message($message, 'status');	
+	    $output = (commerce_webmoney_get_settings('success_message')) ? commerce_webmoney_get_settings('success_message') : '';
+	
+	}   
+  return $output;
+}
+
+function commerce_webmoney_statuses() {
+
+  $options = array();  
+  $statuses = commerce_payment_transaction_statuses();
+  
+  if(!empty($statuses)) {   
+	 foreach($statuses as $status) { 
+     $options[$status['status']] = $status['title']; 
+    }
+  }  
+  
+  return $options;
+}
+
+function commerce_webmoney_create_transaction($order_id, $status) {
+
+    $order = commerce_order_load($order_id);
+	$transaction = commerce_payment_transaction_new('commerce_webmoney', $order->order_id);
+    $transaction->instance_id = $order->data['payment_method'];
+    $transaction->amount = $order->commerce_order_total[LANGUAGE_NONE][0]['amount'];
+    $transaction->currency_code = $order->commerce_order_total[LANGUAGE_NONE][0]['currency_code'];
+    $transaction->status = $status;
+    $transaction->message = '';
+    $transaction->message_variables = array();
+
+    commerce_payment_transaction_save($transaction);
+}

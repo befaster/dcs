@@ -1,0 +1,209 @@
+# $Id$
+#
+# Russian translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  commerce_webmoney.module: n/a
+#  commerce_webmoney.info: n/a
+#  includes/commerce_webmoney.admin.inc: n/a
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2011-08-28 16:14-0700\n"
+"PO-Revision-Date: 2011-08-28 16:38-0800\n"
+"Last-Translator: cbfvb <dvbgfv>\n"
+"Language-Team: Russian <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
+
+#: commerce_webmoney.module:12;13;14;49;49
+msgid "Webmoney"
+msgstr "Webmoney"
+
+#: commerce_webmoney.module:15
+msgid "Integrates Webmoney Merchant"
+msgstr "Интеграция мерчанта Webmoney для оплаты заказов магазина"
+
+#: commerce_webmoney.module:50
+msgid "WebMoney - this is a multifunctional payment tool that provides secure and immediate transactions online."
+msgstr "WebMoney — это универсальное средство для расчетов в Сети, целая среда финансовых взаимоотношений, которой сегодня пользуются миллионы людей по всему миру"
+
+#: commerce_webmoney.module:85
+msgid "Pay via Webmoney Merchant"
+msgstr "Оплатить через мерчант Webmoney"
+
+#: commerce_webmoney.module:97
+msgid "Sorry, no purse available. Please go back and choose another payment method"
+msgstr "Извините, кошельки для получения денег недоступны. Вернитесь назад и выберите другой способ оплаты"
+
+#: commerce_webmoney.module:131
+msgid "Payment for order @order_number at @store"
+msgstr "Оплата заказа №@order_number в магазине @store"
+
+#: commerce_webmoney.module:180
+msgid "Order #@order paid successfully. !log"
+msgstr "Заказ №@order успешно оплачен. !log"
+
+#: commerce_webmoney.module:185
+msgid "An error occurred while processing your payment: recieved and real order info do not match"
+msgstr "Произошла ошибка при обработке вашего платежа: полученные и реальные данные платежа не совпадают"
+
+#: commerce_webmoney.module:186
+msgid "Order #@order was not paid: recieved and real order info do not match. !log"
+msgstr "Заказ №@order не был оплачен: полученные и реальные данные платежа не совпадают. !log"
+
+#: commerce_webmoney.module:193
+msgid "An error occurred while processing your payment: wrong signature"
+msgstr "Произошла ошибка при обработке вашего платежа: неправильная подпись мерчанта"
+
+#: commerce_webmoney.module:194
+msgid "An error occurred while processing payment for order #@order: wrong signature !log"
+msgstr "Произошла ошибка при обработке платежа для заказа №@order: неправильная подпись мерчанта. !log"
+
+#: commerce_webmoney.module:203
+msgid "Payment unsuccessful!"
+msgstr "Ошибка при оплате"
+
+#: commerce_webmoney.module:215
+msgid "Thank you, payment successful. Order #@shop_order,<br />Webmoney order number: @wm_order,<br />Webmoney transaction number: @wm_trans,<br />Webmoney transaction date: @wm_date"
+msgstr "Спасибо, заказ успешно оплачен.<br /><br />Номер заказа в магазине: #@shop_order<br />Номер заказа в системе Webmoney: @wm_order<br />Номер трансакции в системе Webmoney: @wm_trans<br />Время прохождения трансакции в системе Webmoney: @wm_date"
+
+#: commerce_webmoney.module:26
+msgid "Result of payment through Webmoney Merchant"
+msgstr "Результат оплаты через мерчант Webmoney"
+
+#: commerce_webmoney.module:32
+msgid "Successful payment"
+msgstr "Удачная оплата"
+
+#: commerce_webmoney.module:38
+msgid "Unsuccessful payment"
+msgstr "Неудачная оплата"
+
+#: commerce_webmoney.info:0
+msgid "Commerce Webmoney"
+msgstr "Commerce Webmoney"
+
+#: commerce_webmoney.info:0
+msgid "Implements Webmoney payment services for use with Drupal Commerce."
+msgstr "Интеграция платёжного шлюза Webmoney для Drupal Commerce"
+
+#: commerce_webmoney.info:0
+msgid "Commerce (contrib)"
+msgstr "Commerce (contrib)"
+
+#: includes/commerce_webmoney.admin.inc:26
+msgid "Payment mode"
+msgstr "Режим оплаты"
+
+#: includes/commerce_webmoney.admin.inc:35
+msgid "WMZ purse"
+msgstr "WMZ"
+
+#: includes/commerce_webmoney.admin.inc:36
+msgid "WMZ purse (dollars)"
+msgstr "Кошелёк WMZ (доллары США)"
+
+#: includes/commerce_webmoney.admin.inc:42
+msgid "WMR purse"
+msgstr "WMR"
+
+#: includes/commerce_webmoney.admin.inc:43
+msgid "WMR purse (russian ruble)"
+msgstr "Кошелёк WMR (российские рубли)"
+
+#: includes/commerce_webmoney.admin.inc:49
+msgid "WME purse"
+msgstr "WME"
+
+#: includes/commerce_webmoney.admin.inc:50
+msgid "WME purse (euro)"
+msgstr "Кошелёк WME (евро)"
+
+#: includes/commerce_webmoney.admin.inc:56
+msgid "WMU purse"
+msgstr "WMU"
+
+#: includes/commerce_webmoney.admin.inc:57
+msgid "WMU purse (ukrainian gryvna)"
+msgstr "Кошелёк WMU (украинская гривна)"
+
+#: includes/commerce_webmoney.admin.inc:63
+msgid "Testing mode"
+msgstr "Тестовый режим"
+
+#: includes/commerce_webmoney.admin.inc:64
+msgid "How to simulate the execution of payment in test mode."
+msgstr "Как имитировать работу мерчанта"
+
+#: includes/commerce_webmoney.admin.inc:65
+msgid "All succesful"
+msgstr "Все оплаты удачны"
+
+#: includes/commerce_webmoney.admin.inc:65
+msgid "All unsuccessful"
+msgstr "Все оплаты неудачны"
+
+#: includes/commerce_webmoney.admin.inc:65
+msgid "80% - succesful, 20% - unsuccessful"
+msgstr "80% - удачно, 20% - неудачно"
+
+#: includes/commerce_webmoney.admin.inc:71
+msgid "Order description"
+msgstr "Описание заказа"
+
+#: includes/commerce_webmoney.admin.inc:72
+msgid "Optional description for orders that will displays in Webmoney Merchant interface. Use placeholder %order for order ID"
+msgstr "Необязательное описание заказа, которое будет показано в интерфейсе Webmoney Merchant. Для обозначения ID заказа используйте подстановку %order"
+
+#: includes/commerce_webmoney.admin.inc:99
+msgid "Secret key"
+msgstr "Секретный ключ"
+
+#: includes/commerce_webmoney.admin.inc:100
+msgid "Your secret key that you got from Webmoney Merchant"
+msgstr "Секретный пароль, который вам был выдан при регистрации вашего магазина."
+
+#: includes/commerce_webmoney.admin.inc:106
+msgid "Log Merchant messages"
+msgstr "Вести логи"
+
+#: includes/commerce_webmoney.admin.inc:107
+msgid "If enabled, all merchant answers will be logged by watchdog module"
+msgstr "Если включено, будут сохранены ответы от мерчанта в системном журнале."
+
+#: includes/commerce_webmoney.admin.inc:108
+msgid "No"
+msgstr "Нет"
+
+#: includes/commerce_webmoney.admin.inc:108
+msgid "Yes"
+msgstr "Да"
+
+#: includes/commerce_webmoney.admin.inc:114
+msgid "Status"
+msgstr "Состояние"
+
+#: includes/commerce_webmoney.admin.inc:115
+msgid "Choose order status after customer sent the order"
+msgstr "Выберите состояние заказа, которое будет присвоено заказу после его отправки клиентом."
+
+#: includes/commerce_webmoney.admin.inc:123
+msgid "Fail message"
+msgstr "Сообщение ошибки"
+
+#: includes/commerce_webmoney.admin.inc:124
+msgid "Enter optional text that will be displayed when payment fail"
+msgstr "Укажите при желании текст, который будет отображён на странице ошибки"
+
+#: includes/commerce_webmoney.admin.inc:131
+msgid "Success message"
+msgstr "Сообщение удачной оплаты"
+
+#: includes/commerce_webmoney.admin.inc:132
+msgid "Enter optional text that will be displayed when payment succesful"
+msgstr "Укажите при желании текст, который будет отображён покупателю при удачной оплате."
+

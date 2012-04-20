@@ -1,0 +1,326 @@
+<?php
+/**
+ * @file
+ * Implements Payu Payments in Drupal Commerce checkout.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function commerce_payu_menu() {
+  $items['commerce_payu/close_transaction'] = array(
+    'title' => 'Close transaction',
+    'page callback' => 'commerce_payu_close_transaction',
+    'page arguments' => array(),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'commerce_payu.inc',
+    'file path' => drupal_get_path('module', 'commerce_payu') . '/includes',
+  );
+
+  $items['commerce_payu/online'] = array(
+    'title' => 'commerce_payu online',
+    'page callback' => 'commerce_payu_online',
+    'page arguments' => array(),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'commerce_payu.inc',
+    'file path' => drupal_get_path('module', 'commerce_payu') . '/includes',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_commerce_payment_method_info().
+ */
+function commerce_payu_commerce_payment_method_info() {
+  $payment_methods = array();
+
+  //$path = url(drupal_get_path('module', 'commerce_payu') . '/images/' . $name . '.gif', array('absolute' => TRUE));
+  $icon = '<img src="http://www.payu.pl/partners_files/white_logo_blue_place_cards.gif" alt="PayU" title="' . t('PayU') . '" class="commerce-payu-icon" />';
+  $display_title = t('PayU <br/>!logo', array('!logo' => $icon));  
+  
+  $payment_methods['payu'] = array(
+    'base' => 'commerce_payu',
+    'title' => t('PayU'),
+    'short_title' => t('PayU'),
+    'display_title' => $display_title,
+    'description' => t('PayU Payment Gateway'),
+    'terminal' => FALSE,
+    'offsite' => TRUE,
+    'offsite_autoredirect' => TRUE,
+  );
+
+  return $payment_methods;
+}
+
+/**
+ * Payment method callback: settings form.
+ */
+function commerce_payu_settings_form($settings = NULL) {
+  $form = array();
+
+  $settings = (array) $settings + array(
+    'pos_id' => 0,
+    'pos_auth_key' => '',
+    'md5' => '',
+    'md5_2' => '',
+    'payback' => 0,
+  );
+
+  $form['donate'] = array(
+    '#title' => t('Donate'),
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#description' => '<div style="float:right;margin:0 2px;"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3643175"><img src="https://www.paypal.com/pl_PL/PL/i/btn/btn_donate_LG.gif" style="border:0;margin:2px;padding:2px;" name="submit" alt="Dotacja"></a></div><div>' . t('If you want me to continue my development of Drupal modules for Commerce and Ubercart please consider donating me. Thank you. If you need any help or assistance regarding Drupal sites feel free to contact me.') . '</div>',
+  );
+
+  $form['payu_urls'] = array(
+    '#title' => t('Configuration URLs'),
+    '#type' => 'fieldset',
+    '#description' =>
+      '<strong>' . t('Negative URL') . '</strong> ' .
+      urldecode(url('commerce_payu/close_transaction/error', array('absolute' => TRUE,
+        'query' => array(
+          'trans_id'   => '%transId%',
+          'pos_id'     => '%posId%',
+          'pay_type'   => '%payType%',
+          'session_id' => '%sessionId%',
+          'amount'     => '%amountPS%',
+          'order_id'   => '%orderId%',
+          'error'      => '%error%',
+          )
+        ))) .
+      '<br/><strong>' . t('Positive URL') . '</strong> ' .
+      urldecode(url('commerce_payu/close_transaction', array('absolute' => TRUE,
+        'query' => array(
+          'trans_id'   => '%transId%',
+          'pos_id'     => '%posId%',
+          'pay_type'   => '%payType%',
+          'session_id' => '%sessionId%',
+          'amount'     => '%amountPS%',
+          'order_id'   => '%orderId%',
+          )
+        ))) .
+      '<br/><strong>' . t('Report URL') . '</strong> ' . url('commerce_payu/online', array('absolute' => TRUE))
+    ,
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['pos_id'] = array(
+    '#title' => t('POS id'),
+    '#type' => 'textfield',
+    '#default_value' => $settings['pos_id'],
+    '#description' => t('Assigned by PayU'),
+    '#required' => TRUE,
+  );
+
+  $form['md5'] = array(
+    '#title' => t('MD5 key'),
+    '#type' => 'textfield',
+    '#default_value' => $settings['md5'],
+    '#description' => t('Assigned by PayU'),
+  );
+  $form['md5_2'] = array(
+    '#title' => t('Secondary MD5 key'),
+    '#type' => 'textfield',
+    '#default_value' => $settings['md5_2'],
+    '#description' => t('Assigned by PayU'),
+  );
+  $form['pos_auth_key'] = array(
+    '#title' => t('POS authorization key'),
+    '#type' => 'textfield',
+    '#default_value' => $settings['pos_auth_key'],
+    '#description' => t('Assigned by PayU'),
+  );
+
+  $form['payback'] = array(
+    '#title' => t('Enable PAYBACK'),
+    '#type' => 'checkbox',
+    '#default_value' => $settings['payback'],
+    '#description' => t('Enable PAYBACK login of the Client that will receive PAYBACK points'),
+  );
+
+  return $form;
+}
+
+/**
+ * Payment method callback: checkout form.
+ */
+function commerce_payu_submit_form($payment_method, $pane_values, $checkout_pane, $order) {
+  if (empty($payment_method['settings']['pos_id']) ||
+      empty($payment_method['settings']['pos_auth_key']) ||
+      empty($payment_method['settings']['md5']) ||
+      empty($payment_method['settings']['md5_2'])) {
+    drupal_set_message(t('PayU is not configured for use.'), 'error');
+  }
+
+// -----------
+  $form = array();
+
+  // Merge in values from the order.
+  if (!empty($order->data['commerce_payment_payu'])) {
+    $pane_values += $order->data['commerce_payment_payu'];
+  }
+
+  // Merge in default values.
+  $pane_values += array(
+    'payback_login' => isset($_SESSION['commerce_payu']['payback_login']) ? $_SESSION['commerce_payu']['payback_login'] : '',
+  );
+
+  if (!empty($payment_method['settings']['payback']) && $payment_method['settings']['payback']) {
+    $form['payback_login'] = array(
+      '#type' => 'textfield',
+      '#title' => t('PAYBACK login'),
+      '#description' => t('If you have PAYBACK card please enter your PAYBACK number in order to collect points for this transaction.'),
+      '#default_value' => $pane_values['payback_login'],
+      '#required' => FALSE,
+    );
+  }
+
+  // Need to create a dummy value to solve http://drupal.org/node/1230666
+  // Probably an issue in the main commerce module
+  $form['dummy'] = array(
+    '#type' => 'hidden',
+    '#value' => 'dummy'
+  );
+
+  return $form;
+}
+
+/**
+ * Payment method callback: checkout form.
+ */
+function commerce_payu_submit_form_submit($payment_method, $pane_form, $pane_values, $order, $charge) {
+  $_SESSION['commerce_payu']['payback_login'] = !empty($pane_values['payback_login']) ? $pane_values['payback_login'] : '';
+}
+
+/**
+ * Payment method callback: redirect form, a wrapper around the module's general
+ *   use function for building a WPS form.
+ */
+
+function commerce_payu_redirect_form($form, &$form_state, $order, $payment_method) {
+  // Return an error if the enabling action's settings haven't been configured.
+  if (empty($payment_method['settings']['pos_id']) ||
+      empty($payment_method['settings']['pos_auth_key']) ||
+      empty($payment_method['settings']['md5']) ||
+      empty($payment_method['settings']['md5_2'])) {
+    drupal_set_message(t('PayU is not configured for use.'), 'error');
+    commerce_payment_redirect_pane_previous_page($order);
+    return '';
+  }
+
+  $wrapper = entity_metadata_wrapper('commerce_order', $order);
+
+  if(!isset($wrapper->commerce_customer_billing->commerce_customer_address)) {
+    drupal_set_message(t('Please enable Billing information in CHECKOUT PANE.'), 'error');
+    commerce_payment_redirect_pane_previous_page($order);
+    return '';
+  }
+  
+  $currency_code = $wrapper->commerce_order_total->currency_code->value();
+  $amount = $wrapper->commerce_order_total->amount->value();
+
+  // Ensure a default value for the payment_method setting.
+  //$settings += array('payment_method' => '');
+
+  $ts = time();
+
+  // Build the data array that will be translated into hidden form values.
+  $data = array(
+    'pos_id'       => $payment_method['settings']['pos_id'],
+    'pos_auth_key' => $payment_method['settings']['pos_auth_key'],
+    //'pay_type'     => 't',
+    'session_id'   => $order->order_id . ':' . $order->data['payment_redirect_key'],
+    'amount'       => $amount,
+
+    // Set the currency and language codes
+    //'currency_code' => in_array($currency_code, array_keys(commerce_paypal_wps_currencies())) ? $currency_code : $settings['currency_code'],
+    //'lc' => $settings['language'],
+
+    'desc'          => t('Order @order_number in @store', array('@order_number' => $order->order_number, '@store' => variable_get('site_name', url('<front>', array('absolute' => TRUE))))),
+    'order_id'      => $order->order_id,
+    'desc2'         => '',
+    'trsDesc'       => '',
+    'first_name'    => '',
+    'last_name'     => '',
+    'street'        => '',
+    'street_hn'     => '',
+    'street_an'     => '',
+    'city'          => '',
+    'post_code'     => '',
+    'country'       => '',
+    'email'         => '',
+    'phone'         => '',
+    'language'      => '',
+    'client_ip'     => '',
+    'js'            => '',
+    'payback_login' => '',
+    'client_ip'     => ip_address(),
+    'ts'            => $ts,
+  );
+
+
+  // Add address so users don't have to type this twice.
+  $params_map = array(
+    'last_name' => 'name_line',
+    'street' => 'thoroughfare',
+    'street_hn' => 'premise',
+    //'street_an'//'pagador_complemento' => 'sub_premise',
+    //post 'pagador_bairro' => 'dependent_locality',
+    'city' => 'locality',
+    'pagador_estado' => 'administrative_area',
+    'post_code' => 'postal_code',
+    'country' => 'country',
+  );
+  
+
+  foreach ($params_map as $key => $value) {
+    if (isset($wrapper->commerce_customer_billing->commerce_customer_address->$value)) {
+      $data[$key] = $wrapper->commerce_customer_billing->commerce_customer_address->$value->value();
+    }
+  }
+  $customer_name = explode(" ", $data['last_name'], 2);
+  if(count($customer_name)>1) {
+    $data['first_name'] = $customer_name[0];
+    $data['last_name'] = $customer_name[1];
+  }
+
+  $data['sig'] = _commerce_payu_get_sig_key1($data, $payment_method['settings']['md5']);
+
+  $form['#action'] = 'https://www.platnosci.pl/paygw/UTF/NewPayment';
+
+  foreach ($data as $name => $value) {
+    if (!empty($value)) {
+      $form[$name] = array('#type' => 'hidden', '#value' => $value);
+    }
+  }
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Proceed to PayU'),
+  );
+
+  return $form;
+}
+
+function _commerce_payu_get_sig_key1($data, $key1) {
+  $data_sig_keys = array('pos_id', 'pay_type', 'session_id', 'pos_auth_key',
+    'amount', 'desc', 'desc2', 'trsDesc', 'order_id', 'first_name', 'last_name',
+    'payback_login', 'street', 'street_hn', 'street_an', 'city', 'post_code',
+    'country', 'email', 'phone', 'language', 'client_ip', 'ts');
+
+  $str_for_sig = '';
+  foreach ($data_sig_keys as $key) {
+    if (!empty($data[$key])) {
+      $str_for_sig .= $data[$key];
+    }
+  }
+  $str_for_sig .= $key1;
+
+  return md5($str_for_sig);
+}

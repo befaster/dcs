@@ -1,0 +1,403 @@
+# $Id$
+#
+# Polish translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  commerce_payu.module: n/a
+#  commerce_payu.info: n/a
+#  includes/commerce_payu.inc: n/a
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2012-02-23 19:26+0100\n"
+"PO-Revision-Date: 2012-02-23 20:10+0100\n"
+"Last-Translator: mackay <bartek@ikiwi.pl>\n"
+"Language-Team: Polish <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((n==1)?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
+
+#: commerce_payu.module:41;46;47
+msgid "PayU"
+msgstr "PayU"
+
+#: commerce_payu.module:42
+msgid "PayU <br/>!logo"
+msgstr "PayU <br/>!logo"
+
+#: commerce_payu.module:49
+msgid "PayU Payment Gateway"
+msgstr "Bramka Płatności.pl"
+
+#: commerce_payu.module:73
+msgid "Donate"
+msgstr "Przekaż darowiznę"
+
+#: commerce_payu.module:77
+msgid "If you want me to continue my development of Drupal modules for Commerce and Ubercart please consider donating me. Thank you. If you need any help or assistance regarding Drupal sites feel free to contact me."
+msgstr "Jeżeli chcesz abym dalej rozwijał moduły Drupala dla Ubercarta i Commerce rozważ przekazanie dotacji. Dziękuję. Skontaktuj się jeżeli potrzebna Ci pomoc lub wsparcie w zakresie Drupala."
+
+#: commerce_payu.module:81
+msgid "Configuration URLs"
+msgstr "Konfiguracja adresów URL"
+
+#: commerce_payu.module:84
+msgid "Negative URL"
+msgstr "Adres powrotu błędnego"
+
+#: commerce_payu.module:96
+msgid "Positive URL"
+msgstr "Adres powrotu pozytywnego"
+
+#: commerce_payu.module:107
+msgid "Report URL"
+msgstr "Adres raportów"
+
+#: commerce_payu.module:114
+msgid "POS id"
+msgstr "ID punktu płatności"
+
+#: commerce_payu.module:117;125;131;137
+msgid "Assigned by PayU"
+msgstr "Przydzielony przez PayU"
+
+#: commerce_payu.module:122
+msgid "MD5 key"
+msgstr "Klucz MD5"
+
+#: commerce_payu.module:128
+msgid "Secondary MD5 key"
+msgstr "Drugi klucz MD5"
+
+#: commerce_payu.module:134
+msgid "POS authorization key"
+msgstr "Klucz autoryzacji płatności"
+
+#: commerce_payu.module:141
+msgid "Enable PAYBACK"
+msgstr "Włącz PAYBACK"
+
+#: commerce_payu.module:144
+msgid "Enable PAYBACK login of the Client that will receive PAYBACK points"
+msgstr "Włącz obsługę punktów PAYBACK dla obsługiwanych transakcji"
+
+#: commerce_payu.module:158;212
+msgid "PayU is not configured for use."
+msgstr "Bramka PayU nie została poprawnie skonfigurowana."
+
+#: commerce_payu.module:177
+msgid "PAYBACK login"
+msgstr "Login PAYBACK"
+
+#: commerce_payu.module:178
+msgid "If you have PAYBACK card please enter your PAYBACK number in order to collect points for this transaction."
+msgstr "Jeżeli posiadasz kartę PAYBACK prosimy podać jej numer w celu naliczenia puntków PAYBACK za realizowaną transakcję."
+
+#: commerce_payu.module:220
+msgid "Please enable Billing information in CHECKOUT PANE."
+msgstr "Proszę włączyć Dane płatnika w Formularzu realizacji zamówienia."
+
+#: commerce_payu.module:245
+msgid "Order @order_number in @store"
+msgstr "Zamówienie @order_number w @store"
+
+#: commerce_payu.module:305
+msgid "Proceed to PayU"
+msgstr "Przejdź do PayU"
+
+#: commerce_payu.module:12
+msgid "Close transaction"
+msgstr "Zamknij transakcję"
+
+#: commerce_payu.module:22
+msgid "commerce_payu online"
+msgstr "commerce_payu online"
+
+#: commerce_payu.info:0
+msgid "Commerce PayU"
+msgstr "Commerce PayU"
+
+#: commerce_payu.info:0
+msgid "Implements PayU payments in Drupal Commerce checkout."
+msgstr "Wprowadza obsługę PayU dla Drupal Commerce."
+
+#: commerce_payu.info:0
+msgid "Commerce (contrib)"
+msgstr "Commerce (contrib)"
+
+#: includes/commerce_payu.inc:31
+msgid "Transaction unsuccessful"
+msgstr "Transakcja nieudana"
+
+#: includes/commerce_payu.inc:58;57
+msgid "ERROR empty session_id"
+msgstr "ERROR empty session_id"
+
+#: includes/commerce_payu.inc:68;67
+msgid "ERROR order_id"
+msgstr "ERROR order_id"
+
+#: includes/commerce_payu.inc:85
+msgid "ERROR BAD pos_id: @pos_id."
+msgstr "ERROR BAD pos_id: @pos_id."
+
+#: includes/commerce_payu.inc:102
+msgid "ERROR: sig, see to log"
+msgstr "ERROR: sig, see to log"
+
+#: includes/commerce_payu.inc:122
+msgid "ERROR: @code, see to drupal log"
+msgstr "ERROR: @code, see to drupal log"
+
+#: includes/commerce_payu.inc:130
+msgid "view in PayU"
+msgstr "pokaż w PayU"
+
+#: includes/commerce_payu.inc:138
+msgid "ERROR: bad @POS_ID"
+msgstr "ERROR: bad @POS_ID"
+
+#: includes/commerce_payu.inc:148
+msgid "ERROR: błędny podpis"
+msgstr "ERROR: błędny podpis"
+
+#: includes/commerce_payu.inc:221
+msgid "ERROR: unkown status"
+msgstr "ERROR: unkown status"
+
+#: includes/commerce_payu.inc:232
+msgid "ERROR: @code, @desc, @message. See to drupal log"
+msgstr "ERROR: @code, @desc, @message. See to drupal log"
+
+#: includes/commerce_payu.inc:238
+msgid "ERROR: Unknown, see Watchdog1"
+msgstr "ERROR: Unknown, see Watchdog1"
+
+#: includes/commerce_payu.inc:243
+msgid "ERROR: Unknown, see Watchdog2"
+msgstr "ERROR: Unknown, see Watchdog2"
+
+#: includes/commerce_payu.inc:285
+msgid "Not started"
+msgstr "Nowa"
+
+#: includes/commerce_payu.inc:286
+msgid "New"
+msgstr "Nowy"
+
+#: includes/commerce_payu.inc:287
+msgid "Cancelled"
+msgstr "Anulowana"
+
+#: includes/commerce_payu.inc:288
+msgid "Rejected"
+msgstr "Odrzucona"
+
+#: includes/commerce_payu.inc:289
+msgid "Started"
+msgstr "Rozpoczęta"
+
+#: includes/commerce_payu.inc:290
+msgid "Awaiting collection"
+msgstr "Oczekuje na odbiór"
+
+#: includes/commerce_payu.inc:291
+msgid "Negative authorization"
+msgstr "Negatywna autoryzacja"
+
+#: includes/commerce_payu.inc:292
+msgid "Payment rejected"
+msgstr "Płatność odrzucona"
+
+#: includes/commerce_payu.inc:293
+msgid "Payment collected"
+msgstr "Płatność odebrana"
+
+#: includes/commerce_payu.inc:294
+msgid "Incorrect status"
+msgstr "Błędny status"
+
+#: includes/commerce_payu.inc:305
+msgid "Missing or incorrect value of pos id parameter"
+msgstr "brak lub błędna wartość parametru pos_id"
+
+#: includes/commerce_payu.inc:306
+msgid "Missing session_id parameter"
+msgstr "brak parametru session_id"
+
+#: includes/commerce_payu.inc:307
+msgid "Missing ts parameter"
+msgstr "brak parametru ts"
+
+#: includes/commerce_payu.inc:308
+msgid "Missing or incorrect value of sig parameter"
+msgstr "brak lub błędna wartość parametru sig"
+
+#: includes/commerce_payu.inc:309
+msgid "Missing desc parameter"
+msgstr "brak parametru desc"
+
+#: includes/commerce_payu.inc:310
+msgid "Missing client_ip parameter"
+msgstr "brak parametru client_ip"
+
+#: includes/commerce_payu.inc:311
+msgid "Missing first_name parameter"
+msgstr "brak parametru first_name"
+
+#: includes/commerce_payu.inc:312
+msgid "Missing last_name parameter"
+msgstr "brak parametru last_name"
+
+#: includes/commerce_payu.inc:313
+msgid "Missing street parameter"
+msgstr "brak parametru street"
+
+#: includes/commerce_payu.inc:314
+msgid "Missing city parameter"
+msgstr "brak parametru city"
+
+#: includes/commerce_payu.inc:315
+msgid "No post code variable."
+msgstr "brak parametru post_code"
+
+#: includes/commerce_payu.inc:316
+msgid "Missing amount parameter"
+msgstr "brak parametru amount"
+
+#: includes/commerce_payu.inc:317
+msgid "Incorrect bank account numberr"
+msgstr "błędny numer konta bankowego"
+
+#: includes/commerce_payu.inc:318
+msgid "Missing e-mail parameter"
+msgstr "brak parametru email"
+
+#: includes/commerce_payu.inc:319
+msgid "Missing phone number"
+msgstr "brak numeru telefonu"
+
+#: includes/commerce_payu.inc:320
+msgid "Other temporary error"
+msgstr "inny chwilowy błąd"
+
+#: includes/commerce_payu.inc:321
+msgid "Other temporary database error"
+msgstr "inny chwilowy błąd bazy danych"
+
+#: includes/commerce_payu.inc:322
+msgid "Pos with the specified id is blocked"
+msgstr "POS o podanym identyfikatorze jest zablokowany"
+
+#: includes/commerce_payu.inc:323
+msgid "Forbidden pay type value for given pos id"
+msgstr "niedozwolona wartość pay_type dla danego pos_id"
+
+#: includes/commerce_payu.inc:324
+msgid "Specified payment method (pay_type value) is temporarily blocked for the given pos_id, e.g. 204 maintenance break of payment gateway"
+msgstr "podana metoda płatności (wartość pay_type) jest chwilowo zablokowana dla danego pos_id, np. przerwa konserwacyjna bramki płatniczej"
+
+#: includes/commerce_payu.inc:325
+msgid "Transaction amount lower than the minimal value"
+msgstr "kwota transakcji mniejsza od wartości minimalnej"
+
+#: includes/commerce_payu.inc:326
+msgid "Transaction amount higher than the maximal value"
+msgstr "kwota transakcji większa od wartości maksymalnej"
+
+#: includes/commerce_payu.inc:327
+msgid "Exceeded value of all transactions for one Client in the last period of time"
+msgstr "przekroczona wartość wszystkich transakcji dla jednego klienta w ostatnim przedziale czasowym"
+
+#: includes/commerce_payu.inc:328
+msgid ""
+"POS operates in ExpressPayment variant but this form of cooperation has not been activated\n"
+"(awaiting consent of customer support department)"
+msgstr "POS działa w wariancie ExpressPayment lecz nie nastąpiła aktywacja tego wariantu współpracy (czekamy na zgodę działu obsługi klienta)"
+
+#: includes/commerce_payu.inc:330
+msgid "Incorrect pos_id or pos_auth_key number"
+msgstr "błędny numer pos_id lub pos_auth_ke"
+
+#: includes/commerce_payu.inc:331
+msgid "No such transaction"
+msgstr "transakcja nie istnieje"
+
+#: includes/commerce_payu.inc:332;337
+msgid "Transaction started earlier"
+msgstr "brak autoryzacji dla danej transakcji"
+
+#: includes/commerce_payu.inc:333
+msgid "Transaction has already been authorised"
+msgstr "transakcja rozpoczęta wcześniej"
+
+#: includes/commerce_payu.inc:334
+msgid "Transaction cancelled earlier"
+msgstr "transakcja anulowana wcześniej"
+
+#: includes/commerce_payu.inc:335
+msgid "Transaction previously forwarded for collection"
+msgstr "transakcja przekazana do odbioru wcześniej"
+
+#: includes/commerce_payu.inc:336
+msgid "Transaction already collected"
+msgstr "transakcja już odebrana"
+
+#: includes/commerce_payu.inc:338
+msgid "Error while returning funds to Client"
+msgstr "błąd podczas zwrotu środków do klienta"
+
+#: includes/commerce_payu.inc:339
+msgid "Incorrect transaction status, e.g. transaction cannot be acknowledged several times or other, please contact us"
+msgstr "błędny stan transakcji, np. nie można uznać transakcji kilka razy lub inny, prosimy o kontakt"
+
+#: includes/commerce_payu.inc:340
+msgid "Other critical error – please contact site administrator"
+msgstr "inny błąd krytyczny - prosimy o kontakt z administratorem witryny"
+
+#: includes/commerce_payu.inc:347;352
+msgid "unknown"
+msgstr "nieznany"
+
+#: includes/commerce_payu.inc:57;67;84;99;121;137;147;163;220;231;237;242
+msgid "commerce_payu"
+msgstr "commerce_payu"
+
+#: includes/commerce_payu.inc:84
+msgid "ERROR bad pos_id: @pos_id."
+msgstr "ERROR bad pos_id: @pos_id."
+
+#: includes/commerce_payu.inc:99
+msgid "PayU transaction @session_id sig error. to_sig=[@to_sig] (@pos_id, @session_id, @ts, commerce_payu_md5_2, @sig, @sig_local)"
+msgstr "PayU transaction @session_id sig error. to_sig=[@to_sig] (@pos_id, @session_id, @ts, commerce_payu_md5_2, @sig, @sig_local)"
+
+#: includes/commerce_payu.inc:121;237
+msgid "Error sending confirmation to PayU: @session_id @serialize"
+msgstr "Error sending confirmation to PayU: @session_id @serialize"
+
+#: includes/commerce_payu.inc:137
+msgid "Error błędny numer POS_ID: @pos_id<>@remote_pos_id"
+msgstr "Error błędny numer POS_ID: @pos_id<>@remote_pos_id"
+
+#: includes/commerce_payu.inc:147
+msgid "Error bledny podpis statusu transakcji"
+msgstr "Error bledny podpis statusu transakcji"
+
+#: includes/commerce_payu.inc:163
+msgid "transaction: @session_id, status_description: @status_description, status_id: @status_id"
+msgstr "transaction: @session_id, status_description: @status_description, status_id: @status_id"
+
+#: includes/commerce_payu.inc:220
+msgid "unkown status"
+msgstr "Nieznany status"
+
+#: includes/commerce_payu.inc:231
+msgid "Error sending confirmation to PayU: @session_id @code, @desc, @message"
+msgstr "Error sending confirmation to PayU: @session_id @code, @desc, @message"
+
+#: includes/commerce_payu.inc:242
+msgid "ERROR: Unknown, see Watchdog"
+msgstr "ERROR: Unknown, see Watchdog"
+
