@@ -88,10 +88,12 @@ function commerce_interkassa_settings_form($settings = NULL) {
  * Implements hook_commerce_payment_method_info().
  */
 function commerce_interkassa_commerce_payment_method_info() {
+    global $base_url;
+    
     $payment_methods = array();
 
-    $path = drupal_get_path('module', 'commerce_interkassa') . '/images/interkassa_logo.gif';
-    $icon = '<img src="/' . $path . '" alt="' . t('Interkassa') . '" title="' . t('Interkassa') . '" class="commerce-interkassa-logo" />';
+    $path = $base_url . '/' .drupal_get_path('module', 'commerce_interkassa') . '/images/interkassa_logo.gif';
+    $icon = '<img src="' . $path . '" alt="' . t('Interkassa') . '" title="' . t('Interkassa') . '" class="commerce-interkassa-logo" />';
     $display_title = t('Interkassa <br/>!logo', array('!logo' => $icon));
 
     $payment_methods['commerce_interkassa'] = array(
