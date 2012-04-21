@@ -103,7 +103,7 @@ function commerce_interkassa_commerce_payment_method_info() {
         'description' => t('Interkassa Payment'),
         'active' => TRUE,
         'offsite' => TRUE,
-        //'offsite_autoredirect' => TRUE,
+        //'offsite_autoredirect' => TRUE, //@TODO: added it to settings
         'offsite_autoredirect' => FALSE,
     );
 
@@ -149,8 +149,7 @@ function commerce_interkassa_redirect_form($form, &$form_state, $order, $payment
         'ik_fail_url' => $base_url . '/commerce_interkassa/fail',
         'ik_fail_method' => 'post',
         'ik_status_url' => $base_url . '/commerce_interkassa/status',
-        'ik_status_method' => 'post',
-        'ik_payment_desc' => '',
+        'ik_status_method' => 'post',     
     );
 
     $form['#action'] = 'https://interkassa.com/lib/payment.php';
