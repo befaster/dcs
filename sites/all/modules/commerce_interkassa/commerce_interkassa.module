@@ -36,7 +36,6 @@ function commerce_interkassa_settings_form($settings = NULL) {
     $form = array();
 
     $settings = (array) $settings + array(
-        'account' => array('test'),
         'commerce_interkassa_shop_id' => '',
         'commerce_interkassa_secret_id' => '',
         //'commerce_interkassa_payment_meth' => '',
@@ -53,7 +52,7 @@ function commerce_interkassa_settings_form($settings = NULL) {
         '#description' => t('Shop ID in Interkassa system'),
         '#required' => TRUE,
     );
-    
+
     $form['commerce_interkassa_secret_id'] = array(
         '#type' => 'textfield',
         '#title' => t('Interkassa secret ID'),
@@ -98,6 +97,8 @@ function commerce_interkassa_settings_form($settings = NULL) {
         '#defaulst_value' => $settings['commerce_interkassa_checkout_button'],
     );
 
+    $form['#submit'][] = variable_set('commerce_interkassa_settings', $form);
+
     return $form;
 }
 
@@ -130,9 +131,9 @@ function commerce_interkassa_commerce_payment_method_info() {
  */
 function commerce_interkassa_submit_form($payment_method, $pane_values, $checkout_pane, $order) {
     if (empty($payment_method['settings']['commerce_interkassa_shop_id']) ||
-        empty($payment_method['settings']['commerce_interkassa_secret_id'])) {
+            empty($payment_method['settings']['commerce_interkassa_secret_id'])) {
         drupal_set_message(t('Interkassa is not configured for use.'), 'error');
-    }   
+    }
     $form = array();
 
     // Need to create a dummy value to solve http://drupal.org/node/1230666
@@ -246,17 +247,17 @@ function commerce_interkassa_transaction($payment_method, $order, $charge) {
  * @return type 
  */
 function _commerce_interkassa_get_settings($settings) {
-  
+
     $output = '';
     $vars = variable_get('commerce_interkassa_settings', '');
-   
+
     if (!empty($vars)) {
-         foreach ($vars as $key=>$var) {
-             if ($key == $settings) { 
-              $output = $vars[$key]['#default_value'];
-              break; 
-         }  
+        foreach ($vars as $key => $var) {
+            if ($key == $settings) {
+                $output = $vars[$key]['#default_value'];
+                break;
+            }
         }
-    } 
-  return $output;
+    }
+    return $output;
 }
