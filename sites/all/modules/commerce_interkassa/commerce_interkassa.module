@@ -240,3 +240,23 @@ function commerce_interkassa_transaction($payment_method, $order, $charge) {
      */
 }
 
+/**
+ *
+ * @param type $settings
+ * @return type 
+ */
+function _commerce_interkassa_get_settings($settings) {
+  
+    $output = '';
+    $vars = variable_get('commerce_interkassa_settings', '');
+   
+    if (!empty($vars)) {
+         foreach ($vars as $key=>$var) {
+             if ($key == $settings) { 
+              $output = $vars[$key]['#default_value'];
+              break; 
+         }  
+        }
+    } 
+  return $output;
+}
