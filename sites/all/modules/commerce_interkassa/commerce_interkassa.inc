@@ -3,7 +3,6 @@
 /*
  * Proccess payment
  */
-
 function _commerce_interkassa_status() {
     file_put_contents('status.txt', print_r($_POST, true));
     /*
@@ -26,18 +25,13 @@ function _commerce_interkassa_status() {
     if (_commerce_interkassa_get_sign_hash($_POST)) {
         //step 2 - check the amount of payment
         if (!empty($_POST['ik_payment_id'])) {
-
             $order = commerce_order_load($_POST['ik_payment_id']);
             
             $payment_method_instance_id = $order->data['payment_method'];
             $payment_method = commerce_payment_method_instance_load($payment_method_instance_id);
             
-            if ($order && $_POST['ik_payment_id'] == $order->order_id) {
-                $wrapper = entity_metadata_wrapper('commerce_order', $order);
-
-                $currency_code = $wrapper->commerce_order_total->currency_code->value();
-                $amount = $wrapper->commerce_order_total->amount->value();
-                $amount = round(commerce_currency_amount_to_decimal($amount, $currency_code), 2);
+            if ($order && $_POST['ik_payment_id'] == $order->order_id) {                
+                $amount = _commerce_interkassa_get_order_amount($order);
 
                 if (!empty($_POST['ik_payment_amount']) && $_POST['ik_payment_amount'] == $amount) {
                     //step 3 - check the Shop ID in Interkassa system
@@ -94,7 +88,7 @@ function _commerce_interkassa_fail() {
  * @return true - Verifying the signature information of the payment is successful!, 
  *         null - Verifying the signature information about the payment failed
  */
-function _commerce_interkassa_get_sign_hash($status_data) {
+function _commerce_interkassa_get_sign_hash($status_data) {       
     $secret_key = _commerce_interkassa_get_settings('commerce_interkassa_secret_id');
 
     if (!empty($status_data['ik_sign_hash']) && $secret_key) {

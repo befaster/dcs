@@ -134,11 +134,7 @@ function commerce_interkassa_submit_form($payment_method, $pane_values, $checkou
 function commerce_interkassa_redirect_form($form, &$form_state, $order, $payment_method) {
     global $base_url;
 
-    $wrapper = entity_metadata_wrapper('commerce_order', $order);
-
-    $currency_code = $wrapper->commerce_order_total->currency_code->value();
-    $amount = $wrapper->commerce_order_total->amount->value();
-    $amount = round(commerce_currency_amount_to_decimal($amount, $currency_code), 2);
+    $amount = _commerce_interkassa_get_order_amount($order);
 
     // Build the data array that will be translated into hidden form values.
     $data = array(
@@ -191,6 +187,22 @@ function commerce_interkassa_transaction($payment_method, $order, $charge) {
     $transaction->status = COMMERCE_PAYMENT_STATUS_SUCCESS;
 
     commerce_payment_transaction_save($transaction);
+}
+
+/**
+ * Get order amount
+ * 
+ * @param obj $order
+ * @return float Amount of order 
+ */
+function _commerce_interkassa_get_order_amount($order) {
+    $wrapper = entity_metadata_wrapper('commerce_order', $order);
+
+    $currency_code = $wrapper->commerce_order_total->currency_code->value();
+    $amount = $wrapper->commerce_order_total->amount->value();
+    $amount = round(commerce_currency_amount_to_decimal($amount, $currency_code), 2);
+
+    return $amount;
 }
 
 /**
