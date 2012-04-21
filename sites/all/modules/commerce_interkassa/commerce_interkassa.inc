@@ -47,7 +47,7 @@ function _commerce_interkassa_fail() {
  */
 function _commerce_interkassa_get_sign_hash($status_data) {
 
-    $secret_key = variable_get('commerce_interkassa_secret_id');
+    print 'sk-: ' . $secret_key = variable_get('commerce_interkassa_secret_id');
 
     if (!empty($status_data['ik_sign_hash']) && $secret_key) {
         $sing_hash_str = $status_data['ik_shop_id'] . ':' .
@@ -61,7 +61,7 @@ function _commerce_interkassa_get_sign_hash($status_data) {
                 $status_data['ik_fees_payer'] . ':' .
                 $secret_key;
 
-        $sign_hash = strtoupper(md5($sing_hash_str));
+       print '<br />-: '. $sign_hash = strtoupper(md5($sing_hash_str));
 
         if ($status_data['ik_sign_hash'] === $sign_hash) {            
             return true;
