@@ -24,6 +24,8 @@ function _commerce_interkassa_status() {
         if (!empty($_POST['ik_payment_id'])) {
             $order = commerce_order_load($_POST['ik_payment_id']);
 
+            print_r('o: '. $order);    
+            
             $payment_method_instance_id = $order->data['payment_method'];
             $payment_method = commerce_payment_method_instance_load($payment_method_instance_id);
 
