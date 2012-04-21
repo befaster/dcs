@@ -27,7 +27,7 @@ function _commerce_interkassa_status() {
             $payment_method_instance_id = $order->data['payment_method'];
             $payment_method = commerce_payment_method_instance_load($payment_method_instance_id);
 
-            print_r($payment_method);die;
+            print_r($payment_method);die('ffff');
             
             if ($order && $_POST['ik_payment_id'] == $order->order_id) {
                 $wrapper = entity_metadata_wrapper('commerce_order', $order);
