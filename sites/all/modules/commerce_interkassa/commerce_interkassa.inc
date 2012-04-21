@@ -3,6 +3,7 @@
 /*
  * Proccess payment
  */
+
 function _commerce_interkassa_status() {
     file_put_contents('status.txt', print_r($_POST, true));
     /*
@@ -19,12 +20,13 @@ function _commerce_interkassa_status() {
         'ik_fees_payer' => '1',
         'ik_sign_hash' => '0EE07B000658B90CCA6B6520C9C57721'
     );
-    */
+    //*/
+    
     //step 1 - check signature
     if (_commerce_interkassa_get_sign_hash($_POST)) {
         //step 2 - check the amount of payment
         if (!empty($_POST['ik_payment_id'])) {
-            
+
             $order = commerce_order_load($_POST['ik_payment_id']);
             
             $payment_method_instance_id = $order->data['payment_method'];
@@ -39,7 +41,7 @@ function _commerce_interkassa_status() {
 
                 if (!empty($_POST['ik_payment_amount']) && $_POST['ik_payment_amount'] == $amount) {
                     //step 3 - check the Shop ID in Interkassa system
-                    $shop_id = _commerce_interkassa_get_settings('commerce_interkassa_shop_id');
+                    $shop_id = $payment_method['settings']['commerce_interkassa_shop_id'];
 
                     if (!empty($_POST['ik_shop_id']) && ($_POST['ik_shop_id'] == $shop_id)) {
                         //step 4 - check status of paymentss
@@ -66,7 +68,7 @@ function _commerce_interkassa_status() {
         } else {
             watchdog('commerce_interkassa', 'IPN processed: Bad "@order_number" order ID.', array('@order_number' => $_POST['ik_payment_id']), WATCHDOG_INFO);
         }
-    } else {        
+    } else {
         watchdog('commerce_interkassa', 'IPN processed: Signature "@sign_hash"  was failed.', array('@sign_hash' => $_POST['ik_sign_hash']), WATCHDOG_INFO);
     }
 }
