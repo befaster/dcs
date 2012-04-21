@@ -5,19 +5,19 @@
  */
 function _commerce_interkassa_status() {
     file_put_contents('status.txt', print_r($_POST, true));
-    /*
+    ///*
     $_POST = array('ik_shop_id' => 'C6C00382-2752-9476-9CED-3C766EA2BD10',
         'ik_payment_amount' => '0.10',
-        'ik_payment_id' => 'id1',
-        'ik_payment_desc' => 'description',
+        'ik_payment_id' => '25',
+        'ik_payment_desc' => '25',
         'ik_paysystem_alias' => 'liqpaycardu',
         'ik_baggage_fields' => '',
-        'ik_payment_timestamp' => '1334927376',
+        'ik_payment_timestamp' => '1335010343',
         'ik_payment_state' => 'success',
-        'ik_trans_id' => 'IK_6179794',
+        'ik_trans_id' => 'IK_6193058',
         'ik_currency_exch' => '1',
         'ik_fees_payer' => '1',
-        'ik_sign_hash' => '0EE07B000658B90CCA6B6520C9C57721'
+        'ik_sign_hash' => '8C9B64D933E2BAB6254B0F916CBAE553'
     );
     //*/
     
