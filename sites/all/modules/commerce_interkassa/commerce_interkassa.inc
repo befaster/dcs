@@ -3,7 +3,6 @@
 /*
  * Proccess payment
  */
-
 function _commerce_interkassa_status() {
     $_POST = array('ik_shop_id' => 'C6C00382-2752-9476-9CED-3C766EA2BD10',
         'ik_payment_amount' => '0.10',
@@ -28,7 +27,7 @@ function _commerce_interkassa_status() {
             $payment_method_instance_id = $order->data['payment_method'];
             $payment_method = commerce_payment_method_instance_load($payment_method_instance_id);
 
-            dpm($payment_method);
+            print_r($payment_method);die;
             
             if ($order && $_POST['ik_payment_id'] == $order->order_id) {
                 $wrapper = entity_metadata_wrapper('commerce_order', $order);
