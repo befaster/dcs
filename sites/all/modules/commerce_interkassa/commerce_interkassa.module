@@ -53,6 +53,7 @@ function commerce_interkassa_settings_form($settings = NULL) {
         '#description' => t('Shop ID in Interkassa system'),
         '#required' => TRUE,
     );
+    
     $form['commerce_interkassa_secret_id'] = array(
         '#type' => 'textfield',
         '#title' => t('Interkassa secret ID'),
