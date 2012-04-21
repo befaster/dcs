@@ -4,6 +4,8 @@
  * Proccess payment
  */
 function _commerce_interkassa_status() {
+    file_put_contents('status.txt', print_r($_POST, true));
+    /*
     $_POST = array('ik_shop_id' => 'C6C00382-2752-9476-9CED-3C766EA2BD10',
         'ik_payment_amount' => '0.10',
         'ik_payment_id' => 'id1',
@@ -17,19 +19,16 @@ function _commerce_interkassa_status() {
         'ik_fees_payer' => '1',
         'ik_sign_hash' => '0EE07B000658B90CCA6B6520C9C57721'
     );
-
+    */
     //step 1 - check signature
     if (_commerce_interkassa_get_sign_hash($_POST)) {
         //step 2 - check the amount of payment
         if (!empty($_POST['ik_payment_id'])) {
+            
             $order = commerce_order_load($_POST['ik_payment_id']);
-
-            print_r('o: '. $order);    
             
             $payment_method_instance_id = $order->data['payment_method'];
             $payment_method = commerce_payment_method_instance_load($payment_method_instance_id);
-
-            print_r($payment_method);die('ffff');
             
             if ($order && $_POST['ik_payment_id'] == $order->order_id) {
                 $wrapper = entity_metadata_wrapper('commerce_order', $order);
@@ -67,7 +66,7 @@ function _commerce_interkassa_status() {
         } else {
             watchdog('commerce_interkassa', 'IPN processed: Bad "@order_number" order ID.', array('@order_number' => $_POST['ik_payment_id']), WATCHDOG_INFO);
         }
-    } else {
+    } else {        
         watchdog('commerce_interkassa', 'IPN processed: Signature "@sign_hash"  was failed.', array('@sign_hash' => $_POST['ik_sign_hash']), WATCHDOG_INFO);
     }
 }
