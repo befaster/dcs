@@ -35,17 +35,28 @@ function commerce_interkassa_menu() {
 function commerce_interkassa_settings_form($settings = NULL) {
     $form = array();
 
+    $settings = (array) $settings + array(
+        'account' => array('test'),
+        'commerce_interkassa_shop_id' => '',
+        'commerce_interkassa_secret_id' => '',
+        //'commerce_interkassa_payment_meth' => '',
+        'commerce_interkassa_user_fail' => '',
+        'commerce_interkassa_user_success' => '',
+        'commerce_interkassa_mode' => '',
+        'commerce_interkassa_checkout_button' => '',
+    );
+
     $form['commerce_interkassa_shop_id'] = array(
         '#type' => 'textfield',
         '#title' => t('Shop ID'),
-        '#default_value' => variable_get('commerce_interkassa_shop_id', ''),
+        '#default_value' => $settings['commerce_interkassa_shop_id'],
         '#description' => t('Shop ID in Interkassa system'),
         '#required' => TRUE,
     );
     $form['commerce_interkassa_secret_id'] = array(
         '#type' => 'textfield',
         '#title' => t('Interkassa secret ID'),
-        '#default_value' => variable_get('commerce_interkassa_secret_id', ''),
+        '#default_value' => $settings['commerce_interkassa_secret_id'],
         '#description' => t('The secret ID for Interkassa system - MD5 hash.'),
         '#required' => TRUE,
     );
@@ -53,20 +64,20 @@ function commerce_interkassa_settings_form($settings = NULL) {
       $form['commerce_interkassa_payment_meth'] = array(
       '#type' => 'textfield',
       '#title' => t('Payment method'),
-      '#default_value' => variable_get('commerce_interkassa_payment_meth', ''),
+      '#default_value' => $settings['commerce_interkassa_payment_meth'],
       '#description' => t('You can set a payment method which will be used by Interkassa to process payment. If left blank a user will be taken to the list of payment methods.')
       );
      */
     $form['commerce_interkassa_user_fail'] = array(
         '#type' => 'textfield',
         '#title' => t('Failure message'),
-        '#default_value' => variable_get('commerce_interkassa_user_fail', ''),
+        '#default_value' => $settings['commerce_interkassa_user_fail'],
         '#description' => t('This message will be displayed if payment failed.')
     );
     $form['commerce_interkassa_user_success'] = array(
         '#type' => 'textfield',
-        '#title' => t('Failure message'),
-        '#default_value' => variable_get('commerce_interkassa_user_success', ''),
+        '#title' => t('Successful message'),
+        '#default_value' => $settings['commerce_interkassa_user_success'],
         '#description' => t('This message will be displayed if payment was successful.')
     );
     $form['commerce_interkassa_mode'] = array(
@@ -77,13 +88,13 @@ function commerce_interkassa_settings_form($settings = NULL) {
             'production' => t('Live'),
             'test' => t('Test'),
         ),
-        '#default_value' => variable_get('commerce_interkassa_mode', 'test'),
+        '#default_value' => $settings['commerce_interkassa_mode'],
     );
     $form['commerce_interkassa_checkout_button'] = array(
         '#type' => 'textfield',
         '#title' => t('Order review submit button text'),
         '#description' => t('Provide Interkassa specific text for the submit button on the order review page.'),
-        '#defaulst_value' => variable_get('interkassa_checkout_button', t('Submit Order')),
+        '#defaulst_value' => $settings['commerce_interkassa_checkout_button'],
     );
 
     return $form;
@@ -145,7 +156,7 @@ function commerce_interkassa_redirect_form($form, &$form_state, $order, $payment
 
     // Build the data array that will be translated into hidden form values.
     $data = array(
-        'ik_shop_id' => 'C6C00382-2752-9476-9CED-3C766EA2BD10',
+        'ik_shop_id' => $payment_method['settings']['commerce_interkassa_shop_id'],
         'ik_payment_amount' => $amount,
         'ik_payment_id' => $order->order_id,
         'ik_payment_desc' => 'description',
@@ -155,8 +166,10 @@ function commerce_interkassa_redirect_form($form, &$form_state, $order, $payment
         'ik_fail_method' => 'post',
         'ik_status_url' => $base_url . '/commerce_interkassa/status',
         'ik_status_method' => 'post',
+        'ik_payment_desc' => '',
     );
-
+    
+    
     $form['#action'] = 'https://interkassa.com/lib/payment.php';
 
     foreach ($data as $name => $value) {
