@@ -141,7 +141,7 @@ function commerce_interkassa_redirect_form($form, &$form_state, $order, $payment
         'ik_shop_id' => $payment_method['settings']['commerce_interkassa_shop_id'],
         'ik_payment_amount' => $amount,
         'ik_payment_id' => $order->order_id,
-        'ik_payment_desc' => 'description',
+        'ik_payment_desc' => $order->order_id, //@TODO: set title for order description
         'ik_success_url' => $base_url . '/commerce_interkassa/success',
         'ik_success_method' => 'post',
         'ik_fail_url' => $base_url . '/commerce_interkassa/fail',
