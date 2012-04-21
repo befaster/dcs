@@ -1,5 +1,8 @@
 <?php
 
+/*
+ * Proccess payment
+ */
 function _commerce_interkassa_status() {
     
 }
@@ -12,7 +15,11 @@ function _commerce_interkassa_fail() {
     //
 }
 
-function _commerce_interkassa_() {
+
+/**
+ * Verifying the signature information
+ */
+function _commerce_interkassa_get_sign_hash($status_data) {
     $sing_hash_str = $status_data['ik_shop_id'] . ':' .
             $status_data['ik_payment_amount'] . ':' .
             $status_data['ik_payment_id'] . ':' .

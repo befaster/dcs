@@ -1,0 +1,169 @@
+<?php
+// $Id: uc_interkassa.module,v 1.1 2009/10/19 12:43:40 duke Exp $
+
+/**
+ * @file
+ * Process payments using Privatbank service. */
+
+function uc_interkassa_menu() {
+  $items['interkassa/complete'] = array(
+      'title' => 'Congratulations',
+      'page callback' => 'uc_interkassa_complete',
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+function uc_interkassa_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'uc_cart_checkout_review_form' && ($order_id = intval($_SESSION['cart_order'])) > 0) {
+    $order = uc_order_load($order_id);
+    if ($order->payment_method == 'interkassa') {
+      unset($form['submit']);
+      $form['#prefix'] = '<table style="display: inline; padding-top: 1em;"><tr><td>';
+      $form['#suffix'] = '</td><td>'. str_replace('accept-charset="UTF-8"', 'accept-charset="cp1251"', drupal_get_form('uc_interkassa_form', $order)) .'</td></tr></table>';
+    }
+  }
+}
+
+function uc_interkassa_payment_method() {
+  $path = base_path() . drupal_get_path('module', 'uc_interkassa');
+  $methods[] = array(
+      'id' => 'interkassa',
+      'name' => t('Interkassa service'),
+      'title' => t('Interkassa service') .'<br /><img src="'. $path .'/interkassa.gif" style="position: relative; left: 2.5em;">',
+      'desc' => t('Pay by Interkassa Secure Server.'),
+      'callback' => 'uc_interkassa_method_card',
+      'weight' => 3,
+      'checkout' => TRUE,
+      'backend' => TRUE,
+      );
+  return $methods;
+}
+
+function uc_interkassa_method_card($op, &$arg1) {
+  switch ($op) {
+    case 'settings':
+      $form['shop_id'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Shop ID'),
+        '#default_value' => variable_get('shop_id', ''),
+        '#description' => t('Shop ID in Interkassa system'),
+        '#required' => TRUE,      
+      );
+      $form['interkassa_secret'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Interkassa secret ID'),
+        '#default_value' => variable_get('interkassa_secret', ''),
+        '#description' => t('The secret ID for Interkassa system - MD5 hash.'),
+        '#required' => TRUE,
+      );
+      $form['interkassa_payment_meth'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Payment method'),
+        '#default_value' => variable_get('interkassa_payment_meth', ''),
+        '#description' => t('You can set a payment method which will be used by Interkassa to process payment. If left blank a user will be taken to the list of payment methods.')
+      );
+      $form['interkassa_description'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Order details'),
+        '#default_value' => variable_get('interkassa_description', ''),
+        '#description' => t('General details for all orders.')
+      );
+      $form['interkassa_user_field'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Additional comments'),
+        '#default_value' => variable_get('interkassa_user_field', ''),
+        '#description' => t('You can use these comments to pass to Interkassa service. It will be available in Interkassa admin area.')
+      );
+      $form['interkassa_user_fail'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Failure message'),
+        '#default_value' => variable_get('interkassa_user_fail', ''),
+        '#description' => t('This message will be displayed if payment failed.')
+      );      
+      $form['interkassa_mode'] = array(
+        '#type' => 'select',
+        '#title' => t('Transaction mode'),
+        '#description' => t('Transaction mode used for processing orders.'),
+        '#options' => array(
+            'production' => t('Live'),
+            'test' => t('Test'),
+        ),
+        '#default_value' => variable_get('interkassa_mode', 'test'),
+      );
+      $form['interkassa_checkout_button'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Order review submit button text'),
+        '#description' => t('Provide Interkassa specific text for the submit button on the order review page.'),
+        '#default_value' => variable_get('interkassa_checkout_button', t('Submit Order')),
+      );
+  }
+  return $form;
+}
+
+function uc_interkassa_form($form_state, $order) {
+  $country = uc_get_country_data(array('country_id' => $order->billing_country));
+  if ($country === FALSE) {
+    $country = array(0 => array('country_iso_code_3' => 'UA'));
+  }
+  $form = array(
+    '#id' => 'checkout',
+    '#name' => 'checkout',
+    '#method' => 'post',
+    '#action' => 'http://interkassa.com/lib/payment.php',
+  );
+  $interkassa_mode = variable_get('interkassa_mode', 'test');
+  if ($interkassa_mode == 'test') {
+    $amount = 1;   //1 UAH.
+    $data = uc_interkassa_get_data($order->order_id, $amount);}
+  elseif ($interkassa_mode == 'production') {
+    $amount=$order->order_total;
+    $data = uc_interkassa_get_data($order->order_id, $amount);
+  }
+  foreach ($data as $name => $value) {
+    $form[$name] = array('#type' => 'hidden', '#value' => $value);
+  }
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => variable_get('interkassa_checkout_button', t('Submit Order')),
+  );
+  return $form;
+}
+
+function uc_interkassa_get_data($oid = 0, $summ = '1') {
+  $data = array(
+    'ik_shop_id' => variable_get('shop_id', ''),
+    'ik_payment_amount' => $summ,
+    'ik_payment_id' => $oid,
+    'ik_paysystem_alias' => variable_get('interkassa_payment_meth', ''),
+    'ik_baggage_fields' => variable_get('interkassa_user_field', ''),
+    'secret_key' => variable_get('interkassa_secret', ''),
+  );
+  $str = implode($data, ':');
+  $signature = md5($str);
+  $data['ik_payment_desc'] = variable_get('interkassa_description', '');
+  $data['ik_sign_hash'] = $signature;
+  unset($data['secret_key']);
+  return $data;
+}
+
+function uc_interkassa_complete() {
+  $state = $_POST;
+  if ($state['ik_payment_state'] == 'success' && $state['ik_shop_id'] == variable_get('shop_id', '')) {
+    drupal_set_title(t('Payment is finished'));
+    $order = uc_order_load($state['ik_payment_id']);
+    if ($order === FALSE || uc_order_status_data($order->order_status, 'state') != 'in_checkout') {
+      return t('An error has occurred during payment.  Please contact us to ensure your order has submitted.');
+    }
+    $output = uc_cart_complete_sale($order);
+    // Add a comment to let sales team know this came in through the site.
+    uc_order_comment_save($order->order_id, 0, t('Order was payed through Interkassa Site'), 'admin');
+  }
+  if ($state['ik_payment_state'] == 'fail' && $state['ik_shop_id'] == variable_get('shop_id', '')) {
+    drupal_set_title(t('Payment failed'));
+    //TODO: Use failure method. Change it to textarea + format.
+    $output = t('The order № !order is not complete! Please try again or contact shop administration.', array('!order' => $state['ik_payment_id']));  
+  }
+  return $output;
+}
